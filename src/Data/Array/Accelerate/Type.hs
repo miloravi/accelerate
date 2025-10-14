@@ -125,6 +125,7 @@ data IntegralType a where
   TypeWord16  :: IntegralType Word16
   TypeWord32  :: IntegralType Word32
   TypeWord64  :: IntegralType Word64
+  TypeBool    :: IntegralType Bool
 
 -- | Floating-point types supported in array computations.
 --
@@ -167,6 +168,7 @@ instance Show (IntegralType a) where
   show TypeWord16 = "Word16"
   show TypeWord32 = "Word32"
   show TypeWord64 = "Word64"
+  show TypeBool   = "Bool"
 
 instance Show (FloatingType a) where
   show TypeHalf   = "Half"
@@ -202,6 +204,7 @@ formatIntegralType = later $ \case
   TypeWord16 -> "Word16"
   TypeWord32 -> "Word32"
   TypeWord64 -> "Word64"
+  TypeBool   -> "Bool"
 
 formatFloatingType :: Format r (FloatingType a -> r)
 formatFloatingType = later $ \case
@@ -274,6 +277,7 @@ integralDict TypeWord8  = IntegralDict
 integralDict TypeWord16 = IntegralDict
 integralDict TypeWord32 = IntegralDict
 integralDict TypeWord64 = IntegralDict
+integralDict TypeBool   = IntegralDict
 
 floatingDict :: FloatingType a -> FloatingDict a
 floatingDict TypeHalf   = FloatingDict
@@ -301,6 +305,9 @@ singleDict = single
     integral TypeWord16 = SingleDict
     integral TypeWord32 = SingleDict
     integral TypeWord64 = SingleDict
+    integral TypeBool   = SingleDict
+
+     -- Floating types
 
     floating :: FloatingType a -> SingleDict a
     floating TypeHalf   = SingleDict
@@ -332,6 +339,9 @@ scalarTypeWord32 = SingleScalarType $ NumSingleType $ IntegralNumType TypeWord32
 scalarTypeWord64 :: ScalarType Word64
 scalarTypeWord64 = SingleScalarType $ NumSingleType $ IntegralNumType TypeWord64
 
+scalarTypeBool :: ScalarType Bool
+scalarTypeBool = SingleScalarType $ NumSingleType $ IntegralNumType TypeBool
+
 rnfScalarType :: ScalarType t -> ()
 rnfScalarType (SingleScalarType t) = rnfSingleType t
 rnfScalarType (VectorScalarType t) = rnfVectorType t
@@ -360,6 +370,7 @@ rnfIntegralType TypeWord8  = ()
 rnfIntegralType TypeWord16 = ()
 rnfIntegralType TypeWord32 = ()
 rnfIntegralType TypeWord64 = ()
+rnfIntegralType TypeBool   = ()
 
 rnfFloatingType :: FloatingType t -> ()
 rnfFloatingType TypeHalf   = ()
@@ -392,6 +403,7 @@ liftIntegral TypeWord8  x = [|| x ||]
 liftIntegral TypeWord16 x = [|| x ||]
 liftIntegral TypeWord32 x = [|| x ||]
 liftIntegral TypeWord64 x = [|| x ||]
+liftIntegral TypeBool   x = [|| x ||]
 
 liftFloating :: FloatingType t -> t -> CodeQ t
 liftFloating TypeHalf   x = [|| x ||]
@@ -427,6 +439,7 @@ liftIntegralType TypeWord8  = [|| TypeWord8 ||]
 liftIntegralType TypeWord16 = [|| TypeWord16 ||]
 liftIntegralType TypeWord32 = [|| TypeWord32 ||]
 liftIntegralType TypeWord64 = [|| TypeWord64 ||]
+liftIntegralType TypeBool   = [|| TypeBool ||]
 
 liftFloatingType :: FloatingType t -> CodeQ (FloatingType t)
 liftFloatingType TypeHalf   = [|| TypeHalf ||]
